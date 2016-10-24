@@ -25,6 +25,7 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_main);
         initData();
 
+        // Toast.
         CycleViewPager cycleViewPager = (CycleViewPager) getFragmentManager()
                 .findFragmentById(R.id.cycleViewPager);
 
