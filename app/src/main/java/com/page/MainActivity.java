@@ -17,6 +17,7 @@ public class MainActivity extends Activity{
 
     private int[] mImgIds = new int[]{R.mipmap.dy_pic4,R.mipmap.dy_pic1,
             R.mipmap.dy_pic2, R.mipmap.dy_pic3, R.mipmap.dy_pic4,R.mipmap.dy_pic1};
+    private String[] titles = new String[]{"这是第一页","这是第二页","这是第三页","这是第四页"};
     private List<View> mImageViews = new ArrayList<View>();
 
     @Override
@@ -33,9 +34,10 @@ public class MainActivity extends Activity{
         cycleViewPager.setCycle(true);
         cycleViewPager.setWheel(true);
         cycleViewPager.setTime(3*1000);
+        //cycleViewPager.setIndicatorCenter();
 
         // 在加载数据前设置是否循环
-        cycleViewPager.setData(mImageViews);
+        cycleViewPager.setData(mImageViews,titles);
         cycleViewPager.getViewPager().setPageTransformer(true, new DepthPageTransformer());
 
     }

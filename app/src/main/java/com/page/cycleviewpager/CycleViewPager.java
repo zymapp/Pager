@@ -23,24 +23,26 @@ import com.page.ViewPagerScroller;
  * 实现可循环，可轮播的viewpager
  */
 public class CycleViewPager extends Fragment implements OnPageChangeListener {
-    private List<View> views = new ArrayList<View>();
-    private TextView[] indicators;
+    private List<View> views = new ArrayList<>();
+    private String[] titles;                                        //标题列表，与views对应
+    private TextView[] indicators;                                  //指示器列表
     private FrameLayout viewPagerFragmentLayout;
-    private LinearLayout indicatorLayout; // 指示器
+    private LinearLayout indicatorLayout;                           // 指示器
+    private TextView tvTitle;                                       //显示的标题
     private BaseViewPager viewPager;
     private BaseViewPager parentViewPager;
     private ViewPagerAdapter adapter;
     private MyHandler handler;
-    private int time = 5000; // 轮播时间
-    private int currentPosition = 0; // 轮播当前位置
-    private boolean isScrolling = false; // 滚动框是否滚动着
+    private int time = 5000;                                        // 轮播时间
+    private int currentPosition = 0;                                // 轮播当前位置
+    private boolean isScrolling = false;                            // 滚动框是否滚动着
     private LinearLayout viewPagerDefaultBg;
-    private boolean isCycle = false; // 是否循环
-    private boolean isWheel = false; // 是否轮播
-    private long releaseTime = 0; // 手指松开、页面不滚动时间，防止手机松开后短时间进行切换
-    private int WHEEL = 100; // 转动
-    private int WHEEL_WAIT = 101; // 等待
-    private CycleViewPagerIdleListener listener; // 回调接口
+    private boolean isCycle = false;                                // 是否循环
+    private boolean isWheel = false;                                // 是否轮播
+    private long releaseTime = 0;                                   // 手指松开、页面不滚动时间，防止手机松开后短时间进行切换
+    private int WHEEL = 100;                                        // 转动
+    private int WHEEL_WAIT = 101;                                   // 等待
+    private CycleViewPagerIdleListener listener;                    // 回调接口
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,7 +63,7 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
                 .findViewById(R.id.viewPagerFragmentLayout);
         viewPagerDefaultBg = (LinearLayout) view
                 .findViewById(R.id.viewPagerDefaultBg);
-
+        tvTitle = (TextView) view.findViewById(R.id.tv_cyc_title);
         handler = new MyHandler(getActivity()) {
 
             @Override
@@ -74,6 +76,10 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
                         viewPager.setCurrentItem(position, true);
                         if (position == max) { // 最后一页时回到第一页
                             viewPager.setCurrentItem(1, false);
+                        }
+                        setTitle(position-1);
+                        if(position == max-2){
+                            setTitle(0);
                         }
                     }
 
@@ -100,7 +106,14 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
     public void setData(List<View> views) {
         setData(views, 0);
     }
-
+    public void setData(List<View> views, String[] titles){
+        this.titles = titles;
+        setData(views,0);
+    }
+    public void setData(List<View> views, String[] titles, int showPosition){
+        this.titles = titles;
+        setData(views,showPosition);
+    }
     /**
      * 初始化viewpager
      *
@@ -148,6 +161,8 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
         }
         viewPager.setCurrentItem(showPosition);
 
+        setTitle(showPosition-1);
+
         viewPagerDefaultBg.setVisibility(View.GONE);
     }
 
@@ -158,7 +173,7 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.addRule(RelativeLayout.CENTER_VERTICAL);
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
         indicatorLayout.setLayoutParams(params);
     }
@@ -207,8 +222,7 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
 
         @Override
         public void run() {
-            if (getActivity() != null && !getActivity().isFinishing()
-                    && isWheel) {
+            if (getActivity() != null && !getActivity().isFinishing() && isWheel) {
                 long now = System.currentTimeMillis();
                 // 检测上一次滑动时间与本次之间是否有触击(手滑动)操作，有的话等待下次轮播
                 if (now - releaseTime > time - 500) {
@@ -307,8 +321,7 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
 
             viewPager.setCurrentItem(currentPosition, false);
             if (listener != null)
-                listener.onPagerSelected(views.get(currentPosition),
-                        currentPosition);
+                listener.onPagerSelected(views.get(currentPosition), currentPosition);
         }
         isScrolling = false;
     }
@@ -331,6 +344,16 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
             position = currentPosition - 1;
         }
         setIndicator(position);
+        setTitle(position);
+    }
+
+    private void setTitle(int indicator){
+        if(titles!=null && titles.length>0 && indicator < titles.length){
+            if(tvTitle.getVisibility() == View.GONE){
+                tvTitle.setVisibility(View.VISIBLE);
+            }
+            tvTitle.setText(titles[indicator]);
+        }
     }
 
     /**

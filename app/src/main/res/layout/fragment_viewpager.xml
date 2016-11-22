@@ -16,18 +16,32 @@
             android:layout_height="wrap_content" >
         </com.page.cycleviewpager.BaseViewPager>
 
-        <LinearLayout
-            android:id="@+id/viewpagerIndicatorLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/view_small_padding"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/view_padding"
-            android:paddingRight="@dimen/view_padding" >
-        </LinearLayout>
+            android:background="@color/translucent">
+            <TextView
+                android:id="@+id/tv_cyc_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/indicator_width_half"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                android:text="这是文字"
+                />
+            <LinearLayout
+                android:id="@+id/viewpagerIndicatorLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/indicator_width_half"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+            </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 
     <LinearLayout
