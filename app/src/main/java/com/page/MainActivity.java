@@ -15,8 +15,7 @@ import java.util.List;
  */
 public class MainActivity extends Activity{
 
-    private int[] mImgIds = new int[]{R.mipmap.dy_pic4,R.mipmap.dy_pic1,
-            R.mipmap.dy_pic2, R.mipmap.dy_pic3, R.mipmap.dy_pic4,R.mipmap.dy_pic1};
+    private int[] mImgIds = new int[]{R.mipmap.dy_pic4,R.mipmap.dy_pic1, R.mipmap.dy_pic2, R.mipmap.dy_pic3, R.mipmap.dy_pic4,R.mipmap.dy_pic1};
     private String[] titles = new String[]{"这是第一页","这是第二页","这是第三页","这是第四页"};
     private List<View> mImageViews = new ArrayList<View>();
 
@@ -43,12 +42,14 @@ public class MainActivity extends Activity{
     }
 
     private void initData() {
+        int i = 0;
         for (int imgId : mImgIds) {
             ImageView imageView = new ImageView(getApplicationContext());
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setImageResource(imgId);
+            imageView.setTag(i);
             mImageViews.add(imageView);
+            i++;
         }
     }
-
 }

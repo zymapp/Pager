@@ -37,8 +37,10 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
     private int currentPosition = 0;                                // 轮播当前位置
     private boolean isScrolling = false;                            // 滚动框是否滚动着
     private LinearLayout viewPagerDefaultBg;
-    private boolean isCycle = false;                                // 是否循环
-    private boolean isWheel = false;                                // 是否轮播
+    private boolean isCycle = false;                                // 系统是否循环（如果只有一张图片的情况下就不进行循环）
+    private boolean isUserCycle = false;                            // 用户配置的是否循环
+    private boolean isWheel = false;                                // 系统是否轮播（如果只有一张图片的情况下就不进行循环）
+    private boolean isUserWheel = false;                            // 用户配置的是否轮播
     private long releaseTime = 0;                                   // 手指松开、页面不滚动时间，防止手机松开后短时间进行切换
     private int WHEEL = 100;                                        // 转动
     private int WHEEL_WAIT = 101;                                   // 等待
@@ -124,7 +126,7 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
         this.views.clear();
 
         if (views.size() == 0) {
-            viewPagerFragmentLayout.setVisibility(View.GONE);
+            viewPagerFragmentLayout.setVisibility(View.INVISIBLE);
             return;
         }
 
@@ -133,6 +135,13 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
         }
 
         int ivSize = views.size();
+        if(ivSize == 1){
+            isCycle = false;
+            isWheel = false;
+        }else{
+            isCycle = isUserCycle;
+            isWheel = isUserWheel;
+        }
 
         // 设置指示器
         indicators = new TextView[ivSize];
@@ -140,8 +149,7 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
             indicators = new TextView[ivSize - 2];
         indicatorLayout.removeAllViews();
         for (int i = 0; i < indicators.length; i++) {
-            View view = LayoutInflater.from(getActivity()).inflate(
-                    R.layout.layout_indicator, null);
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_indicator, null);
             indicators[i] = (TextView) view.findViewById(R.id.indicator);
             indicatorLayout.addView(view);
         }
@@ -185,6 +193,7 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
      */
     public void setCycle(boolean isCycle) {
         this.isCycle = isCycle;
+        this.isUserCycle = isCycle;
     }
 
     /**
@@ -203,6 +212,7 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
      */
     public void setWheel(boolean isWheel) {
         this.isWheel = isWheel;
+        this.isUserWheel = isWheel;
         isCycle = true;
         if (isWheel) {
             handler.postDelayed(runnable, time);
@@ -351,6 +361,9 @@ public class CycleViewPager extends Fragment implements OnPageChangeListener {
         if(titles!=null && titles.length>0 && indicator < titles.length){
             if(tvTitle.getVisibility() == View.GONE){
                 tvTitle.setVisibility(View.VISIBLE);
+            }
+            if(indicator<0){
+                indicator = 0;
             }
             tvTitle.setText(titles[indicator]);
         }
